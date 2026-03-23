@@ -3,6 +3,8 @@ import { fetchStoresFromApi } from '@/lib/api-client';
 import { MOCK_STORES } from '@/lib/mock-data';
 import { supabase } from '@/lib/supabase';
 
+export const revalidate = 86400; // 24 hours ISR Caching
+
 export async function GET() {
   const useMock = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
 

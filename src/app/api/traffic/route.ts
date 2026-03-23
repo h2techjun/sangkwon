@@ -61,6 +61,10 @@ export async function GET(request: Request) {
           speed: speed,
           isRealTime: true
         }
+      }, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600', // 5분 캐시
+        }
       });
     } else {
       throw new Error('Invalid XML response format or no data');
@@ -80,6 +84,10 @@ export async function GET(request: Request) {
         score: 50,
         speed: 40,
         isRealTime: false
+      }
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60', // 에러/폴백 시엔 1분만 캐시해서 빠른 복구 시도
       }
     });
   }

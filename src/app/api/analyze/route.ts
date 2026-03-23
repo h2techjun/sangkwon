@@ -138,6 +138,10 @@ export async function GET(request: Request) {
         total: aptTotal,
         nearest: apartments.slice(0, 10),
       },
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800', // 1일 캐시, 7일간 백그라운드 갱신
+      }
     });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message });
