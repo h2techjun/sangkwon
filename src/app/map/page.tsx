@@ -206,41 +206,36 @@ export default function MapPage() {
       new kakao.maps.MarkerClusterer({
         map,
         markers,
-        gridSize: 60,
-        minLevel: 5,
+        gridSize: 40,
+        averageCenter: true,
+        minLevel: 4,
         styles: [
           {
-            width: '40px', height: '40px',
-            background: 'rgba(99, 102, 241, 0.9)', 
+            width: '32px', height: '32px',
+            background: 'rgba(99, 102, 241, 0.85)', 
             border: '2px solid rgba(167, 139, 250, 0.8)',
             borderRadius: '50%',
-            color: '#ffffff',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            lineHeight: '36px',
-            boxShadow: '0 0 15px rgba(99, 102, 241, 0.5)'
+            color: '#ffffff', textAlign: 'center', fontWeight: 'bold',
+            lineHeight: '28px', fontSize: '12px',
+            boxShadow: '0 0 10px rgba(99, 102, 241, 0.4)'
         },
         {
-          width: '50px', height: '50px',
-          background: 'rgba(139, 92, 246, 0.9)',
+          width: '42px', height: '42px',
+          background: 'rgba(139, 92, 246, 0.85)',
           border: '2px solid rgba(196, 181, 253, 0.8)', 
           borderRadius: '50%',
-          color: '#ffffff',
-          textAlign: 'center',
-          fontWeight: 'bold',
-          lineHeight: '46px',
-          boxShadow: '0 0 20px rgba(139, 92, 246, 0.6)'
+          color: '#ffffff', textAlign: 'center', fontWeight: 'bold',
+          lineHeight: '38px', fontSize: '14px',
+          boxShadow: '0 0 15px rgba(139, 92, 246, 0.5)'
         },
         {
-          width: '60px', height: '60px',
-          background: 'rgba(236, 72, 153, 0.9)',
+          width: '52px', height: '52px',
+          background: 'rgba(236, 72, 153, 0.85)',
           border: '2px solid rgba(249, 168, 212, 0.8)',
           borderRadius: '50%',
-          color: '#ffffff',
-          textAlign: 'center',
-          fontWeight: 'bold',
-          lineHeight: '56px',
-          boxShadow: '0 0 25px rgba(236, 72, 153, 0.7)'
+          color: '#ffffff', textAlign: 'center', fontWeight: 'bold',
+          lineHeight: '48px', fontSize: '15px',
+          boxShadow: '0 0 20px rgba(236, 72, 153, 0.6)'
         }
       ]
       });
