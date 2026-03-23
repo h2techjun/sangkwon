@@ -143,8 +143,8 @@ export default function SearchPage() {
       </div>
 
       {/* 검색 폼 */}
-      <div className="card p-6 fade-in">
-        <div className="flex gap-3">
+      <div className="card p-4 sm:p-6 fade-in">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1 relative">
             <input
               type="text"
@@ -201,7 +201,7 @@ export default function SearchPage() {
                   </p>
 
                   {/* 점수 분해 */}
-                  <div className="grid grid-cols-4 gap-3 mt-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
                     {[
                       { label: '🏪 점포', score: result.score.store, max: 40, color: 'indigo' },
                       { label: '🏢 아파트', score: result.score.apt, max: 30, color: 'sky' },

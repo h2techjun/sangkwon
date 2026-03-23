@@ -265,19 +265,19 @@ export default function MapPage() {
 
       {/* 뷰 모드 토글 (애플 스타일) */}
       <div className="flex justify-center mb-6 fade-in">
-        <div className="p-1 rounded-2xl bg-[var(--card-border)]/30 backdrop-blur-xl border border-white/5 flex items-center shadow-inner">
+        <div className="p-1 rounded-2xl bg-[var(--card-border)]/30 backdrop-blur-xl border border-white/5 flex flex-col sm:flex-row gap-1 shadow-inner w-full sm:w-auto">
           <button
             onClick={() => setViewMode('map')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
-              viewMode === 'map' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25' : 'text-gray-400 hover:text-white'
+            className={`px-4 sm:px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 w-full sm:w-auto ${
+              viewMode === 'map' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25' : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
             📍 음식점 상권 분포 지도
           </button>
           <button
             onClick={() => setViewMode('hotspots')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
-              viewMode === 'hotspots' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25' : 'text-gray-400 hover:text-white'
+            className={`px-4 sm:px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 w-full sm:w-auto ${
+              viewMode === 'hotspots' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25' : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
             🔥 시간대별 유동인구 핫스팟
