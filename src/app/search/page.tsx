@@ -115,7 +115,7 @@ export default function SearchPage() {
   useEffect(() => {
     if ((window as any).kakao?.maps?.services) return;
     const script = document.createElement('script');
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&libraries=services&autoload=false`;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&libraries=services,clusterer&autoload=false`;
     script.onload = () => (window as any).kakao.maps.load(() => {});
     document.head.appendChild(script);
   }, []);

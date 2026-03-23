@@ -158,7 +158,7 @@ export default function MapPage() {
     }
 
     const script = document.createElement('script');
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=clusterer`;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services,clusterer`;
     script.async = true;
     script.onload = () => {
       window.kakao.maps.load(() => {
@@ -201,7 +201,7 @@ export default function MapPage() {
       return marker;
     });
 
-    // 클러스터러 (라이브러리 로드되었을 때만)
+    // 클러스터러 (라이브러리 로드되었을 때만 실행, 모바일 크래시 방지를 위해 else fallback 제거)
     if (kakao.maps.MarkerClusterer) {
       new kakao.maps.MarkerClusterer({
         map,
@@ -239,9 +239,6 @@ export default function MapPage() {
         }
       ]
       });
-    } else {
-      // clusterer 라이브러리 미로드 시 마커 직접 표시
-      markers.forEach(m => m.setMap(map));
     }
   }, [isMapLoaded, isLoading, MOCK_STORES]);
 

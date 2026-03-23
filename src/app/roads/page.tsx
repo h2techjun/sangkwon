@@ -82,7 +82,7 @@ export default function RoadsPage() {
   useEffect(() => {
     if ((window as any).kakao?.maps) { setMapReady(true); return; }
     const script = document.createElement('script');
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&libraries=services,clusterer&autoload=false`;
     script.onload = () => (window as any).kakao.maps.load(() => setMapReady(true));
     document.head.appendChild(script);
   }, []);
