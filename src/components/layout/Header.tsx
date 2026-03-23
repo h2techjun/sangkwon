@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
@@ -30,9 +31,7 @@ export default function Header() {
       <div className="max-w-[1440px] mx-auto px-6 py-3 flex items-center justify-between">
         {/* 로고 */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow">
-            🏪
-          </div>
+          <Image src="/logo.png" alt="전주상권" width={40} height={40} className="rounded-xl shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow" />
           <div>
             <h1 className="text-lg font-bold text-gradient leading-tight">전주상권</h1>
             <p className="text-[10px] text-[var(--text-muted)] leading-tight">상권분석 시스템</p>
