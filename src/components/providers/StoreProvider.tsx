@@ -35,11 +35,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const res = await fetch('/api/stores');
         const json = await res.json();
         
-        if (!json.success) throw new Error(json.error);
-        
+        // success가 false여도 data가 있으면 사용 (서버 폴백 목업 데이터)
         let rawStores: Store[] = json.data || [];
         
-        // 데이터가 0건일 경우 (API 키 만료나 통신 오류 등), UI 마비를 막기 위해 목업 데이터로 폴백
+        // 데이터가 0건일 경우 클라이언트 목업으로 폴백
         if (rawStores.length === 0) {
           console.warn('API가 빈 데이터를 반환했습니다. UI 보호를 위해 목업 데이터로 대체합니다.');
           rawStores = MOCK_STORES;
