@@ -4,6 +4,7 @@ import { useStores } from '@/components/providers/StoreProvider';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import type { Store } from '@/lib/types';
 
 interface RoadData {
   name: string;
@@ -32,7 +33,7 @@ export default function ReportPage() {
     // 아파트 단지명 수집 (중복 제거)
     const dongAptNames: Record<string, Set<string>> = {};
     stores.forEach(s => {
-      const bldNm = (s as any).bldNm || '';
+      const bldNm = (s as Store & { bldNm?: string }).bldNm || '';
       const dong = s.adongNm || s.ldongNm || '';
       if (bldNm.includes('아파트')) {
         dongAptCount[dong] = (dongAptCount[dong] || 0) + 1;
@@ -77,7 +78,7 @@ export default function ReportPage() {
       const entry = roadMap.get(roadName)!;
       entry.count++;
       entry.industries[s.indsMclsNm] = (entry.industries[s.indsMclsNm] || 0) + 1;
-      if ((s as any).bldNm?.includes('아파트')) entry.aptCount++;
+      if ((s as Store & { bldNm?: string }).bldNm?.includes('아파트')) entry.aptCount++;
     });
 
     // 모든 도로 데이터 구축

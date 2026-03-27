@@ -2,7 +2,7 @@
 
 import { useStores } from '@/components/providers/StoreProvider';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface RoadSummary {
@@ -23,11 +23,14 @@ function RoadMiniMap({ stores, centerLon, centerLat, roadName }: {
   centerLon: number; centerLat: number; roadName: string;
 }) {
   const mapRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kakao Maps SDK instance
   const mapInstance = useRef<any>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kakao Maps SDK has no TypeScript definitions
     if (!mapRef.current || !(window as any).kakao?.maps) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kakao Maps SDK
     const kakao = (window as any).kakao;
     const center = new kakao.maps.LatLng(centerLat, centerLon);
     const map = new kakao.maps.Map(mapRef.current, { center, level: 4 });
@@ -80,10 +83,16 @@ export default function RoadsPage() {
 
   // 카카오맵 SDK 로드
   useEffect(() => {
-    if ((window as any).kakao?.maps) { setMapReady(true); return; }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kakao Maps SDK
+    const win = window as any;
+    if (win.kakao?.maps) {
+      // SDK가 이미 로드된 경우 - 별도 스크립트 추가 불필요
+      const timer = requestAnimationFrame(() => setMapReady(true));
+      return () => cancelAnimationFrame(timer);
+    }
     const script = document.createElement('script');
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&libraries=services,clusterer&autoload=false`;
-    script.onload = () => (window as any).kakao.maps.load(() => setMapReady(true));
+    script.onload = () => win.kakao.maps.load(() => setMapReady(true));
     document.head.appendChild(script);
   }, []);
 

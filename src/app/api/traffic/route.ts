@@ -70,8 +70,8 @@ export async function GET(request: Request) {
       throw new Error('Invalid XML response format or no data');
     }
 
-  } catch (error: any) {
-    console.warn(`Traffic API failed for ${road}:`, error.message);
+  } catch (error: unknown) {
+    console.warn(`Traffic API failed for ${road}:`, error instanceof Error ? error.message : error);
     
     // API 연결 실패 시(혹은 1~24시간 후 활성화 전) Graceful Fallback
     // 유동인구 50(보통)으로 가짜 데이터 반환

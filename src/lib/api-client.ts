@@ -1,4 +1,4 @@
-import { Store, ApiResponse } from './types';
+import { Store } from './types';
 
 const DATA_GO_KR_BASE_URL = 'https://apis.data.go.kr/B553077/api/open/sdsc2';
 const JEONJU_SIGNGU_CODES = ['45111', '45113']; // 완산구, 덕진구

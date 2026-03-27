@@ -34,12 +34,12 @@ export async function GET(request: Request) {
     
     // 아파트만 필터링 (카테고리에 '아파트' 포함하는 것)
     const apartments = (json.documents || [])
-      .filter((doc: any) => {
+      .filter((doc: { place_name?: string; category_name?: string }) => {
         const name = doc.place_name || '';
         const cat = doc.category_name || '';
         return name.includes('아파트') || cat.includes('아파트');
       })
-      .map((doc: any) => ({
+      .map((doc: { place_name?: string; address_name?: string; distance?: string; x?: string; y?: string; category_name?: string }) => ({
         name: doc.place_name,
         address: doc.address_name,
         distance: Number(doc.distance),
@@ -53,7 +53,7 @@ export async function GET(request: Request) {
       data: apartments,
       total: json.meta?.total_count || apartments.length,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Apartment search error:', err);
     return NextResponse.json({ success: true, data: [], total: 0 });
   }

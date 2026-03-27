@@ -153,7 +153,7 @@ export default function MapPage() {
     // 카카오맵 SDK 로드 시도
     const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
     if (!kakaoKey || kakaoKey === 'DEMO_KEY') {
-      setIsMapLoaded(false);
+      // isMapLoaded 초기값이 이미 false이므로 별도 setState 불필요
       return;
     }
 

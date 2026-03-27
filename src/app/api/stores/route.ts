@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { fetchStoresFromApi } from '@/lib/api-client';
 import { MOCK_STORES } from '@/lib/mock-data';
 import { supabase } from '@/lib/supabase';
+import type { Store } from '@/lib/types';
 
 export const revalidate = 86400; // 24 hours ISR Caching
 
@@ -23,7 +24,7 @@ export async function GET() {
     if (!stores || stores.length === 0) {
       console.log('Public API returned empty. Falling back to Supabase DB (jeonju_stores)...');
       
-      let allDbStores: any[] = [];
+      let allDbStores: Store[] = [];
       let page = 0;
       const pageSize = 1000;
       
@@ -66,14 +67,14 @@ export async function GET() {
       data: stores,
       message: `Loaded ${stores.length} stores from public API`,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('API Route Error:', error);
     
     // 최종 폴백: 최악의 상황엔 무조건 MOCK 데이터라도 반환
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to fetch stores',
+        error: error instanceof Error ? error.message : 'Failed to fetch stores',
         data: MOCK_STORES, 
         message: 'Error occurred, falling back to mock data',
       },

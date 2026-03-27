@@ -4,7 +4,6 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useState } from 'react';
 import ChartBar from '@/components/charts/ChartBar';
 import ChartPie from '@/components/charts/ChartPie';
-import { JEONJU_DONGS } from '@/lib/mock-data';
 import { useStores } from '@/components/providers/StoreProvider';
 
 export default function IndustryPage() {

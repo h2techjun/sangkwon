@@ -57,7 +57,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             `);
             
           if (!popError && popData && popData.length > 0) {
-            activePopulation = popData.map((p: any) => ({
+            activePopulation = popData.map((p: { dong_name: string; total_population: number; male?: number; female?: number; age_groups?: { range: string; count: number }[] }) => ({
               dongName: p.dong_name,
               totalPopulation: p.total_population,
               male: p.male || 50,
@@ -81,7 +81,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             .order('period', { ascending: true });
             
           if (!salesError && salesData && salesData.length > 0) {
-            activeSales = salesData.map((s: any) => ({
+            activeSales = salesData.map((s: { period: string; total_sales: string | number; avg_sales_per_store: number }) => ({
               period: s.period,
               totalSales: Number(s.total_sales),
               avgSalesPerStore: s.avg_sales_per_store
@@ -163,8 +163,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         });
         setIndustryStats(newIndustryStats);
 
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setIsLoading(false);
       }

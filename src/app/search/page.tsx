@@ -28,7 +28,7 @@ export default function SearchPage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<{ place_name: string; address_name: string; x: string; y: string }[]>([]);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   // 카카오 주소 자동완성
@@ -70,18 +70,20 @@ export default function SearchPage() {
       // 좌표가 없으면 카카오 Geocoder 사용
       if (!finalLng || !finalLat) {
         const geocoded = await new Promise<{ lng: number; lat: number }>((resolve, reject) => {
-          if (!(window as any).kakao?.maps?.services) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kakao Maps SDK has no TypeScript definitions
+          const win = window as any;
+          if (!win.kakao?.maps?.services) {
             reject(new Error('카카오맵 SDK를 로드하지 못했습니다'));
             return;
           }
-          const geocoder = new (window as any).kakao.maps.services.Geocoder();
-          geocoder.addressSearch(searchAddress, (results: any[], status: string) => {
+          const geocoder = new win.kakao.maps.services.Geocoder();
+          geocoder.addressSearch(searchAddress, (results: { x: string; y: string }[], status: string) => {
             if (status === 'OK' && results.length > 0) {
               resolve({ lng: Number(results[0].x), lat: Number(results[0].y) });
             } else {
               // 주소 검색 실패 시 키워드 검색 시도
-              const places = new (window as any).kakao.maps.services.Places();
-              places.keywordSearch(searchAddress, (r: any[], s: string) => {
+              const places = new win.kakao.maps.services.Places();
+              places.keywordSearch(searchAddress, (r: { x: string; y: string }[], s: string) => {
                 if (s === 'OK' && r.length > 0) {
                   resolve({ lng: Number(r[0].x), lat: Number(r[0].y) });
                 } else {
@@ -104,8 +106,8 @@ export default function SearchPage() {
       } else {
         setError(data.error || '분석 실패');
       }
-    } catch (e: any) {
-      setError(e.message || '분석 중 오류 발생');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '분석 중 오류 발생');
     } finally {
       setLoading(false);
     }
@@ -113,10 +115,12 @@ export default function SearchPage() {
 
   // 카카오맵 SDK 로드
   useEffect(() => {
-    if ((window as any).kakao?.maps?.services) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kakao Maps SDK has no TypeScript definitions
+    const win = window as any;
+    if (win.kakao?.maps?.services) return;
     const script = document.createElement('script');
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&libraries=services,clusterer&autoload=false`;
-    script.onload = () => (window as any).kakao.maps.load(() => {});
+    script.onload = () => win.kakao.maps.load(() => {});
     document.head.appendChild(script);
   }, []);
 

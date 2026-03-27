@@ -13,14 +13,22 @@ export default function PopulationPage() {
   const { stores, dongSummaries: MOCK_DONG_SUMMARIES, population: MOCK_POPULATION, isLoading } = useStores();
   const [selectedDong, setSelectedDong] = useState<string | null>(null);
   const [trafficLoading, setTrafficLoading] = useState(false);
-  const [trafficData, setTrafficData] = useState<any>(null);
+  const [trafficData, setTrafficData] = useState<{
+    road: string;
+    status: string;
+    score: number;
+    speed?: number;
+    isRealTime?: boolean;
+  } | null>(null);
 
   useEffect(() => {
     if (!selectedDong || stores.length === 0) {
-      setTrafficData(null);
       return;
     }
-    
+
+    // 동이 변경되면 이전 결과를 즉시 숨기기 위해 로딩 상태 전환
+    setTrafficLoading(true);
+
     // Find the primary road name based on stores in the district
     const dongStores = stores.filter(s => s.adongNm === selectedDong);
     const roadCounts: Record<string, number> = {};
@@ -32,20 +40,24 @@ export default function PopulationPage() {
         roadCounts[road] = (roadCounts[road] || 0) + 1;
       }
     });
-    
+
     const entries = Object.entries(roadCounts).sort((a,b) => b[1] - a[1]);
     const topRoad = entries.length > 0 ? entries[0][0] : '팔달로';
+    let cancelled = false;
 
-    setTrafficLoading(true);
     fetch(`/api/traffic?road=${encodeURIComponent(topRoad)}`)
       .then(res => res.json())
       .then(data => {
+        if (cancelled) return;
         if (data.success) setTrafficData(data.data);
         else setTrafficData({ road: topRoad, status: '조회불가', score: 0 });
       })
-      .catch(() => setTrafficData({ road: topRoad, status: '오류', score: 0 }))
-      .finally(() => setTrafficLoading(false));
-      
+      .catch(() => {
+        if (!cancelled) setTrafficData({ road: topRoad, status: '오류', score: 0 });
+      })
+      .finally(() => { if (!cancelled) setTrafficLoading(false); });
+
+    return () => { cancelled = true; };
   }, [selectedDong, stores]);
 
   if (isLoading) return <LoadingSpinner />;

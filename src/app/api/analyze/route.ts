@@ -71,7 +71,7 @@ export async function GET(request: Request) {
     const primaryDong = Array.from(dongNames)[0] || '';
 
     // 2. 카카오 아파트 검색
-    let apartments: any[] = [];
+    let apartments: { name: string; address: string; distance: number }[] = [];
     let aptTotal = 0;
     const KAKAO_KEY = process.env.KAKAO_REST_API_KEY;
     if (KAKAO_KEY) {
@@ -84,8 +84,8 @@ export async function GET(request: Request) {
           const aptJson = await aptRes.json();
           aptTotal = aptJson.meta?.total_count || 0;
           apartments = (aptJson.documents || [])
-            .filter((d: any) => (d.place_name || '').includes('아파트') || (d.category_name || '').includes('아파트'))
-            .map((d: any) => ({
+            .filter((d: { place_name?: string; category_name?: string }) => (d.place_name || '').includes('아파트') || (d.category_name || '').includes('아파트'))
+            .map((d: { place_name?: string; address_name?: string; distance?: string }) => ({
               name: d.place_name,
               address: d.address_name,
               distance: Number(d.distance),
@@ -143,8 +143,8 @@ export async function GET(request: Request) {
         'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800', // 1일 캐시, 7일간 백그라운드 갱신
       }
     });
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message });
+  } catch (err: unknown) {
+    return NextResponse.json({ success: false, error: err instanceof Error ? err.message : 'Unknown error' });
   }
 }
 
