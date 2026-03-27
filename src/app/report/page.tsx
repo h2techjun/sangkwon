@@ -165,7 +165,17 @@ export default function ReportPage() {
     };
   }, [stores, dongSummaries, population]);
 
-  if (isLoading || !analysis) return <LoadingSpinner />;
+  if (isLoading) return <LoadingSpinner />;
+
+  if (!analysis) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
+        <p className="text-2xl mb-2">📊</p>
+        <h2 className="text-lg font-bold text-white mb-2">데이터가 부족합니다</h2>
+        <p className="text-sm text-gray-400">점포 또는 행정동 데이터를 불러오지 못했습니다.<br />잠시 후 다시 시도해주세요.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 max-w-[900px] mx-auto">

@@ -19,15 +19,20 @@ export async function GET(request: Request) {
   try {
     // 키워드 검색으로 '아파트' 조회 (반경 내)
     const url = `https://dapi.kakao.com/v2/local/search/keyword.json?query=아파트&x=${lng}&y=${lat}&radius=${radius}&size=15&sort=distance`;
-    
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
     const res = await fetch(url, {
       headers: { Authorization: `KakaoAK ${KAKAO_KEY}` },
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
 
     if (!res.ok) {
       const errText = await res.text();
       console.warn('Kakao keyword search failed:', res.status, errText);
-      return NextResponse.json({ success: true, data: [], total: 0 });
+      return NextResponse.json({ success: false, error: `Kakao API error: ${res.status}`, data: [], total: 0 });
     }
 
     const json = await res.json();
@@ -55,6 +60,7 @@ export async function GET(request: Request) {
     });
   } catch (err: unknown) {
     console.error('Apartment search error:', err);
-    return NextResponse.json({ success: true, data: [], total: 0 });
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ success: false, error: message, data: [], total: 0 });
   }
 }

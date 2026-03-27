@@ -4,6 +4,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useEffect, useRef, useState } from 'react';
 import { JEONJU_CENTER } from '@/lib/mock-data';
 import { useStores } from '@/components/providers/StoreProvider';
+import { loadKakaoSDK } from '@/lib/kakao';
 import PopulationHotspots from '@/components/PopulationHotspots';
 
 // 카카오맵 타입 선언
@@ -29,8 +30,6 @@ export default function MapPage() {
   const [selectedDong, setSelectedDong] = useState<string | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [viewMode, setViewMode] = useState<'map' | 'hotspots'>('map');
-  const useMock = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
-
   // 카카오맵 SDK가 없을 때 fallback 렌더링
   const renderFallbackMap = () => {
     // 동별 음식점 수 기준 히트맵 테이블
@@ -150,26 +149,7 @@ export default function MapPage() {
   };
 
   useEffect(() => {
-    // 카카오맵 SDK 로드 시도
-    const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
-    if (!kakaoKey || kakaoKey === 'DEMO_KEY') {
-      // isMapLoaded 초기값이 이미 false이므로 별도 setState 불필요
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services,clusterer`;
-    script.async = true;
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        setIsMapLoaded(true);
-      });
-    };
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
+    loadKakaoSDK().then(() => setIsMapLoaded(true)).catch(() => {});
   }, []);
 
   useEffect(() => {

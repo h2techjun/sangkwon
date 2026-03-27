@@ -99,12 +99,14 @@ export async function GET(request: Request) {
     // 3. 인구 데이터 조회
     let population = 0;
     if (primaryDong) {
-      const { data: popData } = await supabase
-        .from('jeonju_population')
+      const { data: popData, error: popError } = await supabase
+        .from('population_data')
         .select('total_population')
         .eq('dong_name', primaryDong)
         .limit(1);
-      population = popData?.[0]?.total_population || 0;
+      if (!popError && popData?.[0]) {
+        population = popData[0].total_population || 0;
+      }
     }
 
     // 4. 종합 점수 계산

@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { loadKakaoSDK } from '@/lib/kakao';
 
 interface AnalysisResult {
   address: string;
@@ -31,31 +32,24 @@ export default function SearchPage() {
   const [suggestions, setSuggestions] = useState<{ place_name: string; address_name: string; x: string; y: string }[]>([]);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 카카오 주소 자동완성
+  // 카카오 주소 자동완성 (JS SDK Places 사용)
   const handleAddressChange = useCallback((val: string) => {
     setAddress(val);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (val.length < 2) { setSuggestions([]); return; }
-    
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const res = await fetch(`https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(val + ' 전주')}&size=5`, {
-          headers: { Authorization: `KakaoAK ${await getKakaoKey()}` },
-        });
-        if (res.ok) {
-          const json = await res.json();
-          setSuggestions(json.documents || []);
+
+    debounceRef.current = setTimeout(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kakao Maps SDK
+      const win = window as any;
+      if (!win.kakao?.maps?.services) return;
+      const places = new win.kakao.maps.services.Places();
+      places.keywordSearch(val + ' 전주', (results: { place_name: string; address_name: string; x: string; y: string }[], status: string) => {
+        if (status === 'OK') {
+          setSuggestions(results.slice(0, 5));
         }
-      } catch {}
+      });
     }, 300);
   }, []);
-
-  // REST 키를 서버에서 가져오는 프록시 (보안상 클라이언트에 노출 방지)
-  async function getKakaoKey() {
-    // 클라이언트에서는 REST 키 접근 불가 → 서버 프록시 사용
-    // 대신 Kakao JS SDK의 geocoder 활용
-    return '';
-  }
 
   // 주소를 좌표로 변환 (카카오 JS SDK)
   const geocodeAndAnalyze = useCallback(async (searchAddress: string, lng?: number, lat?: number) => {
@@ -115,13 +109,7 @@ export default function SearchPage() {
 
   // 카카오맵 SDK 로드
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kakao Maps SDK has no TypeScript definitions
-    const win = window as any;
-    if (win.kakao?.maps?.services) return;
-    const script = document.createElement('script');
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&libraries=services,clusterer&autoload=false`;
-    script.onload = () => win.kakao.maps.load(() => {});
-    document.head.appendChild(script);
+    loadKakaoSDK().catch(() => {});
   }, []);
 
   const gradeColor = (grade: string) => {

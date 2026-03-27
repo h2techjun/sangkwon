@@ -175,6 +175,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <StoreContext.Provider value={{ stores, dongSummaries, industryStats, population, salesTrends, isLoading, error }}>
+      {error && !isLoading && (
+        <div className="fixed bottom-4 right-4 z-50 max-w-sm px-4 py-3 rounded-xl bg-red-500/15 border border-red-500/30 text-sm text-red-300 shadow-lg backdrop-blur-sm">
+          <p className="font-bold mb-1">데이터 로드 오류</p>
+          <p className="text-xs text-red-400">{error}</p>
+        </div>
+      )}
       {children}
     </StoreContext.Provider>
   );
